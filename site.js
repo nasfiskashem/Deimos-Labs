@@ -275,5 +275,20 @@ window.DL_PRODUCTS={"bpc-157-5mg": {"name": "BPC-157 5mg", "price": 34.0, "href"
     document.body.appendChild(d);
     setTimeout(function () { d.classList.add('out'); setTimeout(function () { d.remove(); }, 900); }, 1700);
   })();
+  // Reading progress on monograph pages
+  var rb = document.querySelector('.readbar i');
+  if (rb) {
+    var art2 = document.querySelector('.article-body');
+    var prog = function () {
+      if (!art2) return; var r = art2.getBoundingClientRect(), total = r.height - innerHeight * 0.6;
+      rb.style.transform = 'scaleX(' + Math.max(0, Math.min(1, -r.top / total)).toFixed(3) + ')';
+    };
+    addEventListener('scroll', prog, { passive: true }); prog();
+  }
+  // Residue chains animate in when they scroll into view
+  if ('IntersectionObserver' in window && !reduce) {
+    var cio = new IntersectionObserver(function (es) { es.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add('play'); cio.unobserve(en.target); } }); }, { threshold: 0.3 });
+    [].forEach.call(document.querySelectorAll('.chain'), function (c) { cio.observe(c); });
+  } else [].forEach.call(document.querySelectorAll('.chain'), function (c) { c.classList.add('play'); });
   badge();
 })();
