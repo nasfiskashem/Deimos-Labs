@@ -169,7 +169,8 @@ window.DL_PRODUCTS={"bpc-157-5mg": {"name": "BPC-157 5mg", "price": 34.0, "href"
   }
   // Rotating Mars (WebGL). Falls back to the still image if WebGL is unavailable.
   var glc = scene && scene.querySelector('.mars-gl');
-  if (glc) (function () {
+  var lowPower = window.innerWidth < 760 || (navigator.connection && navigator.connection.saveData) || (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 2);
+  if (glc && !lowPower) (function () {
     var gl; try { gl = glc.getContext('webgl', { premultipliedAlpha: true, alpha: true, antialias: true }); } catch (e) {}
     if (!gl) return;
     var VS = 'attribute vec2 p;varying vec2 v;void main(){v=p;gl_Position=vec4(p,0.,1.);}';
@@ -290,5 +291,11 @@ window.DL_PRODUCTS={"bpc-157-5mg": {"name": "BPC-157 5mg", "price": 34.0, "href"
     var cio = new IntersectionObserver(function (es) { es.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add('play'); cio.unobserve(en.target); } }); }, { threshold: 0.3 });
     [].forEach.call(document.querySelectorAll('.chain'), function (c) { cio.observe(c); });
   } else [].forEach.call(document.querySelectorAll('.chain'), function (c) { c.classList.add('play'); });
+  // Mobile menu
+  var mb = document.querySelector('.menu-btn'), hdr = document.querySelector('.site-header');
+  if (mb && hdr) {
+    mb.addEventListener('click', function () { var open = hdr.classList.toggle('menu-open'); mb.setAttribute('aria-expanded', open ? 'true' : 'false'); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && hdr.classList.contains('menu-open')) { hdr.classList.remove('menu-open'); mb.setAttribute('aria-expanded', 'false'); mb.focus(); } });
+  }
   badge();
 })();

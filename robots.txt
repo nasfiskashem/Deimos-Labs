@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://www.deimos-labs.co.uk/sitemap.xml
