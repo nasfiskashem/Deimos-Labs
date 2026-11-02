@@ -15,7 +15,7 @@
   function units(ul) { return ul / U_UL; }
   function uStr(u) { var s = fmt(u); return s + (s === '1' ? ' division' : ' divisions'); }
   var MASS = { mg: 1, ug: 0.001 }, VOL = { mL: 1, uL: 0.001 };
-  var SYR_ON = !!$('r-units');        // the U-100 syringe reading is rendered only when build.py has SYRINGE_UNITS on
+  var SYR_ON = !!$('r-units');        // the graduated-syringe reading is rendered only when build.py has SYRINGE_UNITS on
   var acked = true;  // results show as soon as values are entered; the notice above the form carries the research-only statement
   function gate() { update(); updateBlend(); }
 
