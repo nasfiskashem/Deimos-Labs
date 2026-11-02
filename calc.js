@@ -12,20 +12,8 @@
   }
   function vol(ul) { return ul >= 1000 ? fmt(ul / 1000) + ' mL' : fmt(ul) + ' µL'; }
   var MASS = { mg: 1, ug: 0.001 }, VOL = { mL: 1, uL: 0.001 };
-  var ACK = 'dl-calc-ack', acked = false;
-  try { acked = sessionStorage.getItem(ACK) === '1'; } catch (e) {}
-
-  // ---------- acknowledgement gate ----------
-  var ack = $('calc-ack');
-  function gate() {
-    document.body.classList.toggle('calc-locked', !acked);
-    [].forEach.call(document.querySelectorAll('[data-locked-note]'), function (el) { el.hidden = acked; });
-    update(); updateBlend();
-  }
-  if (ack) {
-    ack.checked = acked;
-    ack.addEventListener('change', function () { acked = ack.checked; try { sessionStorage.setItem(ACK, acked ? '1' : '0'); } catch (e) {} gate(); });
-  }
+  var acked = true;  // results show as soon as values are entered; the notice above the form carries the research-only statement
+  function gate() { update(); updateBlend(); }
 
   // ---------- tabs ----------
   var tabs = [].slice.call(document.querySelectorAll('[role=tab]'));
@@ -91,14 +79,19 @@
     $('r-conc-sub').textContent = dash(fmt(o.C) + ' µg/µL · ' + fmt(o.C * 1000) + ' µg/mL' + (isFinite(o.mM) ? ' · ' + fmt(o.mM) + ' mM (' + fmt(o.mM * 1000) + ' µM)' : ''));
     var okS = ok && isFinite(o.V_ul) && o.V_ul > 0;
     var dashS = function (s) { return L || !okS ? '—' : s; };
+    var inl = $('c-inline');
     if (o.mode === 'volume') {
-      $('r-sample-label').textContent = 'Volume that contains the amount';
+      $('r-sample-label').textContent = 'Volume of solution to draw up';
       $('r-sample').textContent = dashS(vol(o.V_ul));
-      $('r-sample-sub').textContent = dashS(fmt(o.a_mg * 1000) + ' µg' + (isFinite(o.a_nmol) ? ' (' + fmt(o.a_nmol) + ' nmol)' : '') + ' in ' + fmt(o.V_ul) + ' µL · ' + (o.n >= 1 ? o.n.toLocaleString('en-GB') + (o.n === 1 ? ' sample' : ' samples') + ' from the vial' : 'more than the vial holds'));
+      $('r-sample-sub').textContent = dashS('holds ' + fmt(o.a_mg * 1000) + ' µg' + (isFinite(o.a_nmol) ? ' (' + fmt(o.a_nmol) + ' nmol)' : '') + (o.V_ul >= 1000 ? ' · ' + fmt(o.V_ul) + ' µL' : ' · ' + fmt(o.V_ul / 1000) + ' mL') + ' · ' + (o.n >= 1 ? o.n.toLocaleString('en-GB') + (o.n === 1 ? ' sample' : ' samples') + ' from the vial' : 'more than the vial holds'));
+      $('r-how').textContent = okS ? fmt(o.a_mg * 1000) + ' µg ÷ ' + fmt(o.C) + ' µg/µL = ' + fmt(o.V_ul) + ' µL' : '';
+      if (inl) inl.textContent = okS ? 'Draw up ' + vol(o.V_ul) + ' of solution for ' + fmt(o.a_mg * 1000) + ' µg' : ok ? 'Enter the amount you want in a sample.' : 'Enter the vial contents and diluent volume first.';
     } else {
-      $('r-sample-label').textContent = 'Amount in that volume';
+      $('r-sample-label').textContent = 'Amount of peptide in that volume';
       $('r-sample').textContent = dashS(fmt(o.a_mg * 1000) + ' µg');
       $('r-sample-sub').textContent = dashS(fmt(o.a_mg) + ' mg' + (isFinite(o.a_nmol) ? ' · ' + fmt(o.a_nmol) + ' nmol' : '') + ' in ' + fmt(o.V_ul) + ' µL · ' + (o.n >= 1 ? o.n.toLocaleString('en-GB') + (o.n === 1 ? ' sample' : ' samples') + ' from the vial' : 'more than the vial holds'));
+      $('r-how').textContent = okS ? fmt(o.V_ul) + ' µL × ' + fmt(o.C) + ' µg/µL = ' + fmt(o.a_mg * 1000) + ' µg' : '';
+      if (inl) inl.textContent = okS ? fmt(o.V_ul) + ' µL of solution holds ' + fmt(o.a_mg * 1000) + ' µg' : ok ? 'Enter the volume you will draw up.' : 'Enter the vial contents and diluent volume first.';
     }
     $('r-per').textContent = dash('1 µL contains ' + fmt(o.C * 1000) + ' µg' + (isFinite(o.mM) ? ' (' + fmt(o.mM) + ' nmol)' : '') + ' · the vial holds ' + fmt(o.m) + ' mg in ' + vol(o.v * 1000));
     $('r-warn').hidden = L || !ok || !o.over;
@@ -122,7 +115,7 @@
       'Peptide: ' + (p ? p.name : 'not specified') + (isFinite(o.mw) ? ' · MW ' + fmt(o.mw, 6) + ' g/mol' : ''),
       'Vial contents: ' + fmt(o.m) + ' mg · Diluent: ' + vol(o.v * 1000),
       'Concentration: ' + fmt(o.C) + ' mg/mL (' + fmt(o.C) + ' µg/µL)' + (isFinite(o.mM) ? ' · ' + fmt(o.mM) + ' mM' : ''),
-      isFinite(o.V_ul) && o.V_ul > 0 ? (o.mode === 'volume' ? 'Amount per sample: ' + fmt(o.a_mg * 1000) + ' µg → ' + vol(o.V_ul) : 'Volume per sample: ' + fmt(o.V_ul) + ' µL → ' + fmt(o.a_mg * 1000) + ' µg') + (o.n >= 1 ? ' · ' + o.n + ' samples per vial' : '') : '',
+      isFinite(o.V_ul) && o.V_ul > 0 ? (o.mode === 'volume' ? 'Amount wanted per sample: ' + fmt(o.a_mg * 1000) + ' µg → draw up ' + vol(o.V_ul) + ' of solution' : 'Volume drawn up per sample: ' + fmt(o.V_ul) + ' µL → holds ' + fmt(o.a_mg * 1000) + ' µg') + (o.n >= 1 ? ' · ' + o.n + ' samples per vial' : '') : '',
       '', 'Arithmetic only, on values entered by the researcher. Deimos Labs does not recommend any amount, concentration, solvent or protocol. For laboratory research use only. Not for human or veterinary use.',
       'https://www.deimos-labs.co.uk/calculator.html'].filter(function (l) { return l !== ''; }).join('\n');
   }

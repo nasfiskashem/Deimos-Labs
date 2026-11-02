@@ -732,3 +732,8 @@ body.has-buybar .toast { bottom: calc(84px + env(safe-area-inset-bottom, 0px)); 
 .blend-table th:not(:first-child), .blend-table td:not(:first-child) { white-space: normal; }
 @media print { .to-top, .buybar, .recent-sec, .seq-row .btn, .as-link, .announce a { display: none !important; } }
 @media (max-width: 960px) { .menu-btn { display: inline-flex; } }
+.inline-result { font: 500 1rem/1.5 var(--font-mono); color: var(--fg); border-left: 2px solid var(--oxide); padding-left: 12px; }
+.inline-result:empty { display: none; }
+.notice-foot { font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--oxide-2); }
+.readout-main strong { font-size: 2rem; color: var(--oxide-2); }
+#r-how:empty { display: none; }
