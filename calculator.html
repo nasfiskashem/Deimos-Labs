@@ -5,14 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="claude:viewport-fit-sides" content="cover">
 <title>Reconstitution calculator | Deimos Labs</title>
-<meta name="description" content="Work out concentration, molarity and sample volume for a lyophilised peptide from the vial mass and diluent volume you enter. Arithmetic only, for laboratory research use.">
+<meta name="description" content="Work out concentration, molarity and sample volume, in microlitres and as 0.01 mL syringe graduations, for a lyophilised peptide from the vial mass and diluent volume you enter. Arithmetic only, for laboratory research use.">
 <link rel="canonical" href="https://www.deimos-labs.co.uk/calculator.html">
 
 <meta name="theme-color" content="#040506">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Deimos Labs">
 <meta property="og:title" content="Reconstitution calculator | Deimos Labs">
-<meta property="og:description" content="Work out concentration, molarity and sample volume for a lyophilised peptide from the vial mass and diluent volume you enter. Arithmetic only, for laboratory research use.">
+<meta property="og:description" content="Work out concentration, molarity and sample volume, in microlitres and as 0.01 mL syringe graduations, for a lyophilised peptide from the vial mass and diluent volume you enter. Arithmetic only, for laboratory research use.">
 <meta property="og:url" content="https://www.deimos-labs.co.uk/calculator.html">
 <meta property="og:image" content="https://www.deimos-labs.co.uk/assets/og.jpg">
 <meta name="twitter:card" content="summary_large_image">
@@ -40,7 +40,7 @@
 <section class="page-head page-head-grid"><div class="wrap">
   <nav class="crumbs" aria-label="Breadcrumb"><a href="index.html">Home</a><span>/</span><a href="library.html">Research library</a><span>/</span><span>Calculator</span></nav>
   <p class="eyebrow">Lab tools</p><h1>Reconstitution calculator</h1>
-  <p class="lede">Enter what is in the vial, how much diluent you add, and the amount of peptide you want in a sample. It gives you the concentration and the volume of solution that holds that amount. It does the arithmetic; every value, and every decision, is yours.</p>
+  <p class="lede">Enter what is in the vial, how much diluent you add, and the amount of peptide you want in a sample. It gives you the concentration and the volume of solution that holds that amount, in microlitres and as divisions on a 1 mL graduated syringe. It does the arithmetic; every value, and every decision, is yours.</p>
 </div></section>
 <section><div class="wrap calc-wrap">
   <div class="notice" id="calc-notice">
@@ -71,7 +71,7 @@
           <label class="radio"><input type="radio" name="c-solve" value="amount"> I know the volume of each sample. Find the amount of peptide in it.</label>
         </div>
         <div id="c-row-amount"><label for="c-amt">Amount of peptide wanted in each sample<span class="unit-input"><input id="c-amt" type="number" inputmode="decimal" min="0" step="any" placeholder="e.g. 250"><select id="c-amt-u" aria-label="Amount unit"><option value="ug">µg</option><option value="mg">mg</option><option value="nmol">nmol</option></select></span></label></div>
-        <div id="c-row-volume" hidden><label for="c-svol">Volume of each sample<span class="unit-input"><input id="c-svol" type="number" inputmode="decimal" min="0" step="any" placeholder="e.g. 100"><span class="unit-tag">µL</span></span></label></div>
+        <div id="c-row-volume" hidden><label for="c-svol">Volume of each sample, in µL or as 0.01 mL syringe divisions<span class="unit-input"><input id="c-svol" type="number" inputmode="decimal" min="0" step="any" placeholder="e.g. 100"><select id="c-svol-u" aria-label="Volume unit"><option value="uL">µL</option><option value="units">divisions</option></select></span></label></div>
         <p class="inline-result" id="c-inline" aria-live="polite"></p>
       </fieldset>
       <div class="actions"><button type="button" class="btn btn-ghost btn-sm" id="c-copy">Copy summary</button><button type="button" class="btn btn-ghost btn-sm" id="c-link">Copy link</button><button type="button" class="btn btn-ghost btn-sm" id="c-reset">Reset</button></div>
@@ -82,7 +82,17 @@
       <p class="fine" id="r-hint">Enter the peptide mass and the diluent volume to begin.</p>
       <div class="readout"><span class="readout-label">Concentration</span><strong id="r-conc">—</strong><span class="readout-sub mono" id="r-conc-sub">—</span></div>
       <div class="readout readout-main"><span class="readout-label" id="r-sample-label">Volume of solution per sample</span><strong id="r-sample">—</strong><span class="readout-sub mono" id="r-sample-sub">—</span><span class="readout-sub mono" id="r-how"></span></div>
-      
+      <div class="readout"><span class="readout-label">The same volume on a 1 mL syringe graduated in 100 divisions</span><strong id="r-units">—</strong><span class="readout-sub mono" id="r-units-sub">1 division = 10 µL (0.01 mL)</span></div>
+      <figure class="syr-fig" id="syr-fig"><svg viewBox="0 0 400 84" aria-hidden="true" focusable="false">
+        <path d="M40 40h12v10h-12z" class="s-hub"/>
+        <rect x="52" y="27" width="298" height="36" rx="4" class="s-barrel"/>
+        <rect id="s-fill" class="s-fill" x="54" y="29" width="0" height="32" rx="2"/>
+        <g id="s-ticks"></g>
+        <rect id="s-seal" class="s-seal" x="54" y="29" width="4" height="32" rx="1"/>
+        <rect id="s-rod" class="s-rod" x="58" y="40" width="308" height="10"/>
+        <rect x="348" y="19" width="5" height="52" rx="1" class="s-flange"/><rect x="366" y="31" width="6" height="28" rx="2" class="s-pad"/>
+        <text id="s-read" class="s-read" x="54" y="17" text-anchor="middle"></text></svg>
+        <figcaption><label class="syr-pick">Syringe<select id="c-syr" aria-label="Syringe capacity"><option value="100">1 mL · 100 divisions</option><option value="50">0.5 mL · 50 divisions</option></select></label><span class="mono" id="syr-text">Volume shown as 0.01 mL divisions · 1 division = 10 µL</span></figcaption></figure>
       <p class="fine mono" id="r-per">—</p>
       <p class="form-error" id="r-warn" hidden>That is more peptide than the vial contains.</p>
       <figure class="calc-fig"><svg viewBox="0 0 200 240" aria-hidden="true" focusable="false">
@@ -116,7 +126,7 @@
     </form>
     <div class="calc-results" aria-live="polite">
       <div class="spec-head"><span class="spec-brand"><img src="assets/mark.webp" alt="" width="22" height="22">Results</span><span class="mono">Not a recommendation</span></div>
-      <dl class="specs"><div><dt>Volume of solution per sample</dt><dd id="b-svol">—</dd></div><div><dt>Samples from the vial</dt><dd id="b-n">—</dd></div><div><dt>Total peptide</dt><dd id="b-total">—</dd></div><div><dt>Total concentration</dt><dd id="b-conc">—</dd></div></dl>
+      <dl class="specs"><div><dt>Volume of solution per sample</dt><dd id="b-svol">—</dd></div><div><dt>As 0.01 mL syringe divisions</dt><dd id="b-units">—</dd></div><div><dt>Samples from the vial</dt><dd id="b-n">—</dd></div><div><dt>Total peptide</dt><dd id="b-total">—</dd></div><div><dt>Total concentration</dt><dd id="b-conc">—</dd></div></dl>
       <p class="form-error" id="b-warn" hidden>That is more of the reference component than the vial contains.</p>
     </div>
     <div class="blend-breakdown">
@@ -127,7 +137,8 @@
   <div class="calc-notes prose">
     <h2>How the numbers are worked out</h2>
     <p>Concentration is peptide mass divided by diluent volume: 5 mg in 2 mL is 2.5 mg/mL, which is the same as 2.5 µg/µL. Molar concentration is concentration divided by molecular weight: 2.5 g/L ÷ 1419.55 g/mol = 1.76 mmol/L. The volume that contains a given amount is amount divided by concentration: 250 µg at 2.5 µg/µL is 100 µL. The dry powder's own volume is treated as negligible, and the number of samples is the total volume divided by the sample volume, rounded down.</p>
-    
+    <h2>Syringe graduations</h2>
+    <p>A 1 mL graduated syringe is commonly marked in 100 divisions, so one division is 10 µL (0.01 mL). The reading is that conversion applied to the sample volume and nothing more: 100 µL is 10 divisions whatever the solution contains, and a 0.5 mL syringe with 50 divisions uses the same 0.01 mL spacing, so the drawing can be set to match the syringe in your laboratory. A reading on a syringe scale is a volume. It is not an instruction to use a syringe, and it says nothing about how, where or whether any solution is used.</p>
     <h2>What it does not do</h2>
     <p>It does not choose a peptide, an amount, a concentration, a solvent or a piece of equipment, and it has no defaults for any of them. It does not allow for net peptide content, counter-ion mass, losses on transfer, or the accuracy of your balance and pipettes. Treat its output as a check on your own calculation, not a replacement for it, and check it against your laboratory's procedures.</p>
     <h2>Related</h2>
