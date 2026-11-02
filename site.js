@@ -3,6 +3,7 @@ window.DL_PRODUCTS={"bpc-157-5mg": {"name": "BPC-157 5mg", "price": 34.0, "href"
 /* Deimos Labs basket and forms. window.DL_PRODUCTS and window.DL_EMAIL are prepended by build.py. */
 (function () {
   var KEY = 'deimos-basket', memory = [], P = window.DL_PRODUCTS || {}, EMAIL = window.DL_EMAIL;
+  var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
   function gbp(n) { return '£' + n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ','); }
   function load() {
     try { var v = JSON.parse(localStorage.getItem(KEY) || '[]'); memory = Array.isArray(v) ? v.filter(function (i) { return P[i.id]; }) : []; } catch (e) {}
@@ -34,13 +35,20 @@ window.DL_PRODUCTS={"bpc-157-5mg": {"name": "BPC-157 5mg", "price": 34.0, "href"
     }
     var c = e.target.closest('[data-copy]');
     if (c) {
-      var pre = document.getElementById(c.dataset.copy), note = c.closest('.result').querySelector('[data-copy-note]');
+      var pre = document.getElementById(c.dataset.copy), wrap = c.closest('.result');
+      var note = document.querySelector('[data-copy-note="' + c.dataset.copy + '"]') || (wrap && wrap.querySelector('[data-copy-note]'));
+      var text = c.dataset.copyPlain || pre.textContent;
       var select = function () {
         var r = document.createRange(); r.selectNodeContents(pre); var s = getSelection(); s.removeAllRanges(); s.addRange(r);
-        note.textContent = 'Text selected. Press Ctrl+C or ⌘C to copy.'; note.hidden = false;
+        if (note) { note.textContent = 'Text selected. Press Ctrl+C or ⌘C to copy.'; note.hidden = false; }
       };
-      try { navigator.clipboard.writeText(pre.textContent).then(function () { note.textContent = 'Copied to clipboard.'; note.hidden = false; }, select); } catch (x) { select(); }
+      try { navigator.clipboard.writeText(text).then(function () { if (note) { note.textContent = 'Copied to clipboard.'; note.hidden = false; } }, select); } catch (x) { select(); }
+      return;
     }
+    var pb = e.target.closest('[data-print]');
+    if (pb) { window.print(); return; }
+    var tt = e.target.closest('[data-to-top]');
+    if (tt) { e.preventDefault(); window.scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' }); var m = document.getElementById('main'); if (m) m.focus({ preventScroll: true }); }
   });
 
   function check(form, errEl) {
@@ -95,12 +103,29 @@ window.DL_PRODUCTS={"bpc-157-5mg": {"name": "BPC-157 5mg", "price": 34.0, "href"
       });
     },
     contactPage: function () {
+      try {
+        var q = new URLSearchParams(location.search), topic = document.getElementById('c-topic');
+        if (q.get('topic') && [].some.call(topic.options, function (o) { return o.value === q.get('topic'); })) topic.value = q.get('topic');
+        if (q.get('msg')) { document.getElementById('c-msg').value = q.get('msg'); if (!q.get('topic')) topic.value = 'Certificate of analysis'; }
+        if (q.get('msg') || q.get('topic')) document.getElementById('c-name').focus();
+      } catch (e) {}
       document.getElementById('contact-form').addEventListener('submit', function (e) {
         e.preventDefault();
         if (!check(this, document.getElementById('c-error'))) return;
         var body = 'Name: ' + val('c-name') + '\nEmail: ' + val('c-email') + '\nInstitution: ' + (val('c-org') || '-') + '\nTopic: ' + val('c-topic') + '\n\n' + val('c-msg');
         ready('c-result', 'c-text', 'c-mailto', val('c-topic') + ' – ' + val('c-name'), body);
       });
+    },
+    coaPage: function () {
+      var f = document.getElementById('lot-form'), inp = document.getElementById('lot-no');
+      if (!f) return;
+      f.addEventListener('submit', function (e) {
+        e.preventDefault();
+        var lot = inp.value.trim();
+        if (!lot) { inp.focus(); inp.setAttribute('aria-invalid', 'true'); return; }
+        location.href = 'contact.html?topic=' + encodeURIComponent('Certificate of analysis') + '&msg=' + encodeURIComponent('Please send the certificate of analysis for lot ' + lot + '.');
+      });
+      inp.addEventListener('input', function () { inp.removeAttribute('aria-invalid'); });
     }
   };
   document.addEventListener('click', function (e) {
@@ -110,7 +135,6 @@ window.DL_PRODUCTS={"bpc-157-5mg": {"name": "BPC-157 5mg", "price": 34.0, "href"
     if (e.key === 'Escape') [].forEach.call(document.querySelectorAll('details.dropdown[open]'), function (d) { d.open = false; });
   });
   // Starfield, orbit and parallax for the hero
-  var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (reduce) [].forEach.call(document.querySelectorAll('animateMotion'), function (m) { m.remove(); });
   var cv = document.querySelector('.starfield');
   if (cv && cv.getContext) {
@@ -291,6 +315,38 @@ window.DL_PRODUCTS={"bpc-157-5mg": {"name": "BPC-157 5mg", "price": 34.0, "href"
     var cio = new IntersectionObserver(function (es) { es.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add('play'); cio.unobserve(en.target); } }); }, { threshold: 0.3 });
     [].forEach.call(document.querySelectorAll('.chain'), function (c) { cio.observe(c); });
   } else [].forEach.call(document.querySelectorAll('.chain'), function (c) { c.classList.add('play'); });
+  // Back to top, shown after a screen and a half of scrolling
+  var top = document.querySelector('[data-to-top]');
+  if (top) {
+    var topShow = function () { top.hidden = window.scrollY < window.innerHeight * 1.5; };
+    addEventListener('scroll', topShow, { passive: true }); topShow();
+  }
+  // Product pages: sticky buy bar on small screens once the main buy button has scrolled away
+  var bar = document.querySelector('[data-buybar]'), buyRow = document.querySelector('.buy-row');
+  if (bar && buyRow) {
+    var small = matchMedia('(max-width: 960px)');
+    var barShow = function () { var on = small.matches && buyRow.getBoundingClientRect().bottom < 0; if (bar.hidden === !on) return; bar.hidden = !on; document.body.classList.toggle('has-buybar', on); };
+    addEventListener('scroll', barShow, { passive: true }); addEventListener('resize', barShow); barShow();
+  }
+  // Product pages: recently viewed (this browser only)
+  var rs = document.querySelector('[data-recent]');
+  if (rs) {
+    var RK = 'deimos-recent', seen = [];
+    try { seen = JSON.parse(localStorage.getItem(RK) || '[]'); } catch (e) {}
+    if (!Array.isArray(seen)) seen = [];
+    var cur = rs.dataset.recent, others = seen.filter(function (id) { return id !== cur && P[id]; }).slice(0, 4);
+    if (others.length) {
+      var box = document.getElementById('recent');
+      others.forEach(function (id) {
+        var a = document.createElement('a'); a.className = 'recent-item'; a.href = P[id].href;
+        var n = document.createElement('span'); n.className = 'recent-name'; n.textContent = P[id].name;
+        var pr = document.createElement('span'); pr.className = 'price mono'; pr.textContent = gbp(P[id].price);
+        a.appendChild(n); a.appendChild(pr); box.appendChild(a);
+      });
+      rs.hidden = false;
+    }
+    try { localStorage.setItem(RK, JSON.stringify([cur].concat(seen.filter(function (id) { return id !== cur; })).slice(0, 8))); } catch (e) {}
+  }
   // Mobile menu
   var mb = document.querySelector('.menu-btn'), hdr = document.querySelector('.site-header');
   if (mb && hdr) {

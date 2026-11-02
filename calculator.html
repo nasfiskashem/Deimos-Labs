@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>Reconstitution calculator | Deimos Labs</title>
+<meta name="description" content="Work out concentration, molarity and sample volume for a lyophilised peptide from the vial mass and diluent volume you enter. Arithmetic only, for laboratory research use.">
+<link rel="canonical" href="https://www.deimos-labs.co.uk/calculator.html">
+
+<meta name="theme-color" content="#040506">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Deimos Labs">
+<meta property="og:title" content="Reconstitution calculator | Deimos Labs">
+<meta property="og:description" content="Work out concentration, molarity and sample volume for a lyophilised peptide from the vial mass and diluent volume you enter. Arithmetic only, for laboratory research use.">
+<meta property="og:url" content="https://www.deimos-labs.co.uk/calculator.html">
+<meta property="og:image" content="https://www.deimos-labs.co.uk/assets/og.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="assets/favicon.png">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.deimos-labs.co.uk/"}, {"@type": "ListItem", "position": 2, "name": "Research library", "item": "https://www.deimos-labs.co.uk/library.html"}, {"@type": "ListItem", "position": 3, "name": "Reconstitution calculator", "item": "https://www.deimos-labs.co.uk/calculator.html"}]}</script>
+<link rel="preload" href="assets/fonts/ibm-plex-sans-400-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/michroma-400-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<div class="announce" role="region" aria-label="Site notice"><div class="wrap announce-inner"><span><strong>Coming soon</strong></span><span class="sep" aria-hidden="true">◆</span><span>We are not taking orders yet. Browse the catalogue ahead of launch.</span><span class="sep" aria-hidden="true">◆</span><a href="mailto:info@deimos-labs.co.uk?subject=Tell%20me%20when%20ordering%20opens">Tell me when ordering opens</a></div></div>
+<header class="site-header">
+  <div class="header-inner">
+    <a class="brand" href="index.html"><img class="mark" src="assets/mark.webp" alt="" width="40" height="40"><span class="wordmark"><span>DEIMOS</span><small>LABS</small></span></a>
+    <button class="menu-btn" type="button" aria-expanded="false" aria-controls="site-nav"><span class="visually-hidden">Menu</span><i></i><i></i><i></i></button>
+    <nav class="site-nav" id="site-nav" aria-label="Main"><details class="dropdown"><summary>Catalogue</summary><div class="dropdown-menu"><a href="shop.html">All peptides</a><a href="shop.html#tissue-research">Tissue research</a><a href="shop.html#cardiovascular">Cardiovascular</a><a href="shop.html#neuroscience">Neuroscience</a><a href="contact.html">Custom synthesis</a></div></details><a href="library.html">Research library</a><a href="calculator.html" aria-current="page">Calculator</a><a href="coa.html">Certificates</a><a href="delivery.html">Delivery & Returns</a><a href="faq.html">FAQ</a><a href="about.html">About</a><a href="contact.html">Contact</a></nav>
+    <a class="basket-link" href="basket.html" aria-label="Basket"><svg viewBox="0 0 24 24" aria-hidden="true" class="icon"><path d="M3 4h2l2.4 11.2a1 1 0 0 0 1 .8h9.2a1 1 0 0 0 1-.8L20 8H6.2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="9.5" cy="20" r="1.4" fill="currentColor"/><circle cx="17" cy="20" r="1.4" fill="currentColor"/></svg><span>Basket</span><span class="badge" data-basket-count hidden>0</span></a>
+  </div>
+</header>
+<main id="main" tabindex="-1">
+
+<section class="page-head page-head-grid"><div class="wrap">
+  <nav class="crumbs" aria-label="Breadcrumb"><a href="index.html">Home</a><span>/</span><a href="library.html">Research library</a><span>/</span><span>Calculator</span></nav>
+  <p class="eyebrow">Lab tools</p><h1>Reconstitution calculator</h1>
+  <p class="lede">Concentration, molarity and sample volume for a lyophilised peptide, from the vial contents and the diluent volume you enter. It does the arithmetic. Every value, and every decision, is yours.</p>
+</div></section>
+<section><div class="wrap calc-wrap">
+  <div class="notice" id="calc-notice">
+    <h2>Laboratory arithmetic only</h2>
+    <p>This calculator converts the numbers you enter. It does not recommend or suggest a peptide, amount, concentration, solvent, volume, protocol, route of administration or use, and nothing it shows is dosing, medical or veterinary guidance. The researcher supplies every value and is responsible for checking each result against their own procedures. Deimos Labs products are for laboratory research use only and are not for human or veterinary use.</p>
+    <label class="check" for="calc-ack"><input id="calc-ack" type="checkbox"> I am using this tool for laboratory research and understand that it performs arithmetic on my own values only.</label>
+  </div>
+  <div class="seg" role="tablist" aria-label="Calculator mode">
+    <button type="button" role="tab" id="tab-single" aria-controls="panel-single" aria-selected="true">Single peptide</button>
+    <button type="button" role="tab" id="tab-blend" aria-controls="panel-blend" aria-selected="false" tabindex="-1">Blend</button>
+  </div>
+  <div id="panel-single" role="tabpanel" aria-labelledby="tab-single" class="calc">
+    <form class="form calc-form" novalidate onsubmit="return false">
+      <fieldset><legend>1. The vial</legend>
+        <label for="c-pep">Peptide (optional, fills in the molecular weight)<select id="c-pep"><option value="">Choose from the catalogue, or leave blank</option></select></label>
+        <div class="row">
+          <label for="c-mass">Peptide in the vial<span class="unit-input"><input id="c-mass" type="number" inputmode="decimal" min="0" step="any" placeholder="e.g. 5"><select id="c-mass-u" aria-label="Mass unit"><option value="mg">mg</option><option value="ug">µg</option></select></span></label>
+          <label for="c-mw">Molecular weight, g/mol (optional, gives molarity)<input id="c-mw" type="number" inputmode="decimal" min="0" step="any" placeholder="e.g. 1419.55"></label>
+        </div>
+      </fieldset>
+      <fieldset><legend>2. The diluent</legend>
+        <label for="c-vol">Volume of diluent added to the vial<span class="unit-input"><input id="c-vol" type="number" inputmode="decimal" min="0" step="any" placeholder="e.g. 2"><select id="c-vol-u" aria-label="Volume unit"><option value="mL">mL</option><option value="uL">µL</option></select></span></label>
+        <p class="fine">Any solvent. The calculator treats the volume of the dry powder as negligible and does not choose a solvent for you. See the <a href="guide-reconstitution.html">handling guide</a> for how solvents are usually chosen.</p>
+      </fieldset>
+      <fieldset><legend>3. The sample</legend>
+        <div class="radios" role="radiogroup" aria-label="What to calculate">
+          <label class="radio"><input type="radio" name="c-solve" value="volume" checked> I know the amount per sample and want the volume</label>
+          <label class="radio"><input type="radio" name="c-solve" value="amount"> I know the volume per sample and want the amount</label>
+        </div>
+        <div id="c-row-amount"><label for="c-amt">Amount per sample<span class="unit-input"><input id="c-amt" type="number" inputmode="decimal" min="0" step="any" placeholder="e.g. 250"><select id="c-amt-u" aria-label="Amount unit"><option value="ug">µg</option><option value="mg">mg</option><option value="nmol">nmol</option></select></span></label></div>
+        <div id="c-row-volume" hidden><label for="c-svol">Volume per sample<span class="unit-input"><input id="c-svol" type="number" inputmode="decimal" min="0" step="any" placeholder="e.g. 100"><span class="unit-tag">µL</span></span></label></div>
+      </fieldset>
+      <div class="actions"><button type="button" class="btn btn-ghost btn-sm" id="c-copy">Copy summary</button><button type="button" class="btn btn-ghost btn-sm" id="c-link">Copy link</button><button type="button" class="btn btn-ghost btn-sm" id="c-reset">Reset</button></div>
+      <p class="fine" id="c-copy-note" hidden></p>
+    </form>
+    <div class="calc-results" aria-live="polite">
+      <div class="spec-head"><span class="spec-brand"><img src="assets/mark.webp" alt="" width="22" height="22">Results</span><span class="mono">Arithmetic only</span></div><p class="locked-note" data-locked-note>Tick the confirmation above to show results.</p>
+      <p class="fine" id="r-hint">Enter the peptide mass and the diluent volume to begin.</p>
+      <div class="readout"><span class="readout-label">Concentration</span><strong id="r-conc">—</strong><span class="readout-sub mono" id="r-conc-sub">—</span></div>
+      <div class="readout"><span class="readout-label" id="r-sample-label">Volume that contains the amount</span><strong id="r-sample">—</strong><span class="readout-sub mono" id="r-sample-sub">—</span></div>
+      <p class="fine mono" id="r-per">—</p>
+      <p class="form-error" id="r-warn" hidden>That is more peptide than the vial contains.</p>
+      <figure class="calc-fig"><svg viewBox="0 0 200 240" aria-hidden="true" focusable="false">
+        <ellipse cx="100" cy="226" rx="62" ry="7" class="v-shadow"/><rect x="68" y="16" width="64" height="32" rx="5" class="v-cap"/><rect x="74" y="44" width="52" height="12" rx="2" class="v-crimp"/>
+        <path d="M66 56h68v4q16 6 16 22v134q0 8-8 8H58q-8 0-8-8V82q0-16 16-22z" class="v-glass"/>
+        <rect id="f-liquid" class="f-liquid" x="52" y="216" width="96" height="0" rx="4" style="opacity:0"/>
+        <path d="M62 70v100" class="v-shine"/><rect x="50" y="94" width="100" height="76" class="v-label" opacity="0.85"/>
+        <image href="assets/mark.webp" x="55" y="99" width="16" height="16"/><text x="74" y="111" class="v-brand">DEIMOS LABS</text>
+        <text x="100" y="142" text-anchor="middle" class="v-size" id="f-vial-text">—</text></svg>
+        <figcaption><span class="mono" id="f-vol"></span><span class="mono" id="f-conc"></span><span>Level drawn against a 3 mL vial, not to scale.</span></figcaption></figure>
+      <div class="gauge" id="gauge"><div class="gauge-bar"><i id="gauge-fill"></i></div><span class="mono" id="gauge-text">Sample volume will appear here</span></div>
+    </div>
+  </div>
+  <div id="panel-blend" role="tabpanel" aria-labelledby="tab-blend" class="calc" hidden>
+    <form class="form calc-form" novalidate onsubmit="return false">
+      <fieldset><legend>1. Components in the vial</legend>
+        <p class="fine">For a vial that holds more than one peptide. Enter each component and the mass of it in the vial.</p>
+        <ol class="blend-rows" id="blend-rows"></ol>
+        <button type="button" class="btn btn-ghost btn-sm" id="b-add">Add component</button>
+      </fieldset>
+      <fieldset><legend>2. The diluent</legend>
+        <label for="b-vol">Volume of diluent added to the vial<span class="unit-input"><input id="b-vol" type="number" inputmode="decimal" min="0" step="any" placeholder="e.g. 3"><select id="b-vol-u" aria-label="Volume unit"><option value="mL">mL</option><option value="uL">µL</option></select></span></label>
+      </fieldset>
+      <fieldset><legend>3. The sample</legend>
+        <label for="b-ref">Reference component<select id="b-ref"></select></label>
+        <label for="b-target">Amount of the reference component per sample<span class="unit-input"><input id="b-target" type="number" inputmode="decimal" min="0" step="any" placeholder="e.g. 500"><select id="b-target-u" aria-label="Amount unit"><option value="ug">µg</option><option value="mg">mg</option></select></span></label>
+        <p class="fine">The other components follow in the vial's own ratio, because one volume of solution carries all of them.</p>
+      </fieldset>
+      <div class="actions"><button type="button" class="btn btn-ghost btn-sm" id="b-copy">Copy summary</button></div>
+      <p class="fine" id="b-copy-note" hidden></p>
+    </form>
+    <div class="calc-results" aria-live="polite">
+      <div class="spec-head"><span class="spec-brand"><img src="assets/mark.webp" alt="" width="22" height="22">Results</span><span class="mono">Arithmetic only</span></div><p class="locked-note" data-locked-note>Tick the confirmation above to show results.</p>
+      <dl class="specs"><div><dt>Total peptide</dt><dd id="b-total">—</dd></div><div><dt>Total concentration</dt><dd id="b-conc">—</dd></div><div><dt>Sample volume</dt><dd id="b-svol">—</dd></div><div><dt>Samples</dt><dd id="b-n">—</dd></div></dl>
+      <p class="form-error" id="b-warn" hidden>That is more of the reference component than the vial contains.</p>
+    </div>
+    <div class="blend-breakdown">
+      <h2>Breakdown by component</h2>
+      <div class="table-wrap"><table class="data-table blend-table" id="blend-table"><thead><tr><th>Component</th><th>In vial</th><th>Share</th><th>Concentration</th><th>Per sample</th></tr></thead><tbody></tbody></table></div>
+    </div>
+  </div>
+  <div class="calc-notes prose">
+    <h2>How the numbers are worked out</h2>
+    <p>Concentration is peptide mass divided by diluent volume: 5 mg in 2 mL is 2.5 mg/mL, which is the same as 2.5 µg/µL. Molar concentration is concentration divided by molecular weight: 2.5 g/L ÷ 1419.55 g/mol = 1.76 mmol/L. The volume that contains a given amount is amount divided by concentration: 250 µg at 2.5 µg/µL is 100 µL. The dry powder's own volume is treated as negligible, and the number of samples is the total volume divided by the sample volume, rounded down.</p>
+    <h2>What it does not do</h2>
+    <p>It does not choose a peptide, an amount, a concentration or a solvent, and it has no defaults for any of them. It does not allow for net peptide content, counter-ion mass, losses on transfer, or the accuracy of your balance and pipettes. Treat its output as a check on your own calculation, not a replacement for it, and check it against your laboratory's procedures.</p>
+    <h2>Related</h2>
+    <p><a href="guide-reconstitution.html">Handling guide: reconstituting and storing lyophilised peptides</a> · <a href="library.html">Research library</a> · <a href="coa.html">Certificates of analysis</a></p>
+    <p class="ruo-inline">For laboratory research use only. Not for human or veterinary use. Nothing on this page is dosing, medical or veterinary guidance.</p>
+  </div>
+</div></section>
+
+</main>
+<footer class="site-footer">
+  <div class="wrap footer-inner">
+    <div class="footer-brand">
+      <a class="brand" href="index.html"><img class="mark" src="assets/mark.webp" alt="" width="40" height="40"><span class="wordmark"><span>DEIMOS</span><small>LABS</small></span></a>
+      <p>Synthetic peptides for laboratory research, tested batch by batch and shipped from the UK.</p>
+      <span class="mono">info@deimos-labs.co.uk</span>
+    </div>
+    <div class="footer-cols">
+      <div><h2>Shop</h2><a href="shop.html">All peptides</a><a href="shop.html#tissue-research">Tissue research</a><a href="shop.html#cardiovascular">Cardiovascular</a><a href="shop.html#neuroscience">Neuroscience</a><a href="contact.html">Custom synthesis</a></div>
+      <div><h2>Help</h2><a href="library.html">Research library</a><a href="calculator.html">Reconstitution calculator</a><a href="guide-reconstitution.html">Handling guide</a><a href="faq.html">FAQ</a><a href="delivery.html">Delivery and returns</a><a href="payment.html">Payment methods</a><a href="coa.html">Certificates of analysis</a><a href="contact.html">Contact us</a></div>
+      <div><h2>Company</h2><a href="about.html">About us</a><a href="terms.html">Terms and conditions</a><a href="privacy.html">Privacy policy</a></div>
+    </div>
+  </div>
+  <div class="wrap ruo-band"><strong>For laboratory research use only.</strong> Products sold by Deimos Labs are not for human or veterinary use, and are not intended to diagnose, treat, cure or prevent any disease. They must be handled by qualified professionals in a laboratory setting.</div>
+  <div class="footer-giant" aria-hidden="true"><img src="assets/logo.webp" alt="" width="900" height="654" loading="lazy"></div>
+  <div class="wrap legal"><span>© 2026 Deimos Labs Ltd</span><span>Deimos Labs Ltd is registered in England and Wales, company no. 17554462 · Registered office: 54 Avenue Court, Claybury Broadway, Ilford, IG5 0LL</span></div>
+</footer>
+<a class="to-top" href="#main" data-to-top hidden aria-label="Back to top"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V6M5 12l7-7 7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+<script src="site.js"></script>
+<script>window.DL_PEPTIDES={"bpc-157": {"name": "BPC-157", "mw": 1419.55, "sizes": [5.0, 10.0]}, "tb-500": {"name": "TB-500 (Thymosin \u03b24 17\u201323)", "mw": 889.02, "sizes": [5.0, 10.0]}, "ghk-cu": {"name": "GHK-Cu (copper tripeptide-1)", "mw": 340.38, "sizes": [50.0, 100.0]}, "angiotensin-ii": {"name": "Angiotensin II, human", "mw": 1046.19, "sizes": [5.0, 25.0]}, "bradykinin": {"name": "Bradykinin", "mw": 1060.22, "sizes": [5.0, 25.0]}, "substance-p": {"name": "Substance P", "mw": 1347.64, "sizes": [1.0, 5.0]}, "leu-enkephalin": {"name": "Leu-Enkephalin", "mw": 555.63, "sizes": [5.0, 25.0]}, "amyloid-beta-1-42": {"name": "Amyloid \u03b2 (1\u201342), human", "mw": 4514.1, "sizes": [0.5, 1.0]}};</script><script src="calc.js"></script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "Organization", "name": "Deimos Labs Ltd", "url": "https://www.deimos-labs.co.uk/", "logo": "https://www.deimos-labs.co.uk/assets/og.jpg", "email": "info@deimos-labs.co.uk", "address": {"@type": "PostalAddress", "streetAddress": "54 Avenue Court, Claybury Broadway", "addressLocality": "Ilford", "postalCode": "IG5 0LL", "addressCountry": "GB"}, "identifier": "17554462"}</script>
+</body>
+</html>
