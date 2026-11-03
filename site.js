@@ -60,6 +60,8 @@ window.DL_PRODUCTS={"bpc-157-5mg": {"name": "BPC-157 5mg", "price": 34.0, "href"
     errEl.hidden = false; bad[0].focus(); return false;
   }
   function val(id) { return document.getElementById(id).value.trim(); }
+  // Orders are accepted from organisations only, so personal webmail addresses are refused at the form.
+  var FREEMAIL = ['gmail.com', 'googlemail.com', 'hotmail.com', 'hotmail.co.uk', 'outlook.com', 'live.com', 'live.co.uk', 'msn.com', 'yahoo.com', 'yahoo.co.uk', 'ymail.com', 'icloud.com', 'me.com', 'mac.com', 'aol.com', 'proton.me', 'protonmail.com', 'gmx.com', 'gmx.co.uk', 'mail.com', 'yandex.com', 'btinternet.com', 'sky.com', 'virginmedia.com', 'talktalk.net'];
   function ready(resultId, textId, mailId, subject, body) {
     document.getElementById(textId).textContent = body;
     document.getElementById(mailId).href = 'mailto:' + EMAIL + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
@@ -93,6 +95,8 @@ window.DL_PRODUCTS={"bpc-157-5mg": {"name": "BPC-157 5mg", "price": 34.0, "href"
       var of = document.getElementById('order-form');
       if (of) of.addEventListener('submit', function (e) {
         e.preventDefault();
+        var em = document.getElementById('o-email'), dom = (em.value.split('@')[1] || '').trim().toLowerCase();
+        em.setCustomValidity(FREEMAIL.indexOf(dom) >= 0 ? 'Please use your work email at your organisation\'s domain.' : '');
         if (!check(this, document.getElementById('o-error'))) return;
         var s = render();
         var body = 'Order request\n\n' + s.items.map(function (i) { return i.qty + ' x ' + P[i.id].name + ' @ ' + gbp(P[i.id].price) + ' = ' + gbp(i.qty * P[i.id].price); }).join('\n') +
