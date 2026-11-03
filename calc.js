@@ -11,7 +11,11 @@
     return v.toLocaleString('en-GB', { maximumFractionDigits: 8 });
   }
   function vol(ul) { return ul >= 1000 ? fmt(ul / 1000) + ' mL' : fmt(ul) + ' µL'; }
+  var U_UL = 10;                      // 1 mL graduated in 100 divisions, so 1 division = 10 µL
+  function units(ul) { return ul / U_UL; }
+  function uStr(u) { var s = fmt(u); return s + (s === '1' ? ' division' : ' divisions'); }
   var MASS = { mg: 1, ug: 0.001 }, VOL = { mL: 1, uL: 0.001 };
+  var SYR_ON = !!$('r-units');        // the graduated-syringe reading is rendered only when build.py has SYRINGE_UNITS on
   var acked = true;  // results show as soon as values are entered; the notice above the form carries the research-only statement
   function gate() { update(); updateBlend(); }
 
@@ -55,7 +59,10 @@
       out.V_ul = out.a_mg / C * 1000;
       out.a_nmol = out.a_mg / mw * 1e6;
     } else {
-      out.V_ul = num('c-svol');
+      var su = $('c-svol-u') ? $('c-svol-u').value : 'uL', sv = num('c-svol');
+      out.inUnits = su === 'units';
+      out.V_ul = out.inUnits ? sv * U_UL : sv;
+      $('c-svol').placeholder = out.inUnits ? 'e.g. 10' : 'e.g. 100';
       out.a_mg = C * out.V_ul / 1000;
       out.a_nmol = out.a_mg / mw * 1e6;
     }
@@ -65,7 +72,7 @@
     try {
       var q = new URLSearchParams();
       if (sel.value) q.set('p', sel.value);
-      ['c-mass', 'c-mass-u', 'c-vol', 'c-vol-u', 'c-mw', 'c-amt', 'c-amt-u', 'c-svol'].forEach(function (id) { if ($(id).value !== '') q.set(id.slice(2), $(id).value); });
+      ['c-mass', 'c-mass-u', 'c-vol', 'c-vol-u', 'c-mw', 'c-amt', 'c-amt-u', 'c-svol', 'c-svol-u', 'c-syr'].forEach(function (id) { if ($(id) && $(id).value !== '') q.set(id.slice(2), $(id).value); });
       q.set('solve', mode);
       history.replaceState(null, '', '?' + q.toString());
     } catch (e) {}
@@ -81,19 +88,25 @@
     var dashS = function (s) { return L || !okS ? '—' : s; };
     var inl = $('c-inline');
     if (o.mode === 'volume') {
-      $('r-sample-label').textContent = 'Volume of solution to draw up';
+      $('r-sample-label').textContent = 'Volume of solution per sample';
       $('r-sample').textContent = dashS(vol(o.V_ul));
       $('r-sample-sub').textContent = dashS('holds ' + fmt(o.a_mg * 1000) + ' µg' + (isFinite(o.a_nmol) ? ' (' + fmt(o.a_nmol) + ' nmol)' : '') + (o.V_ul >= 1000 ? ' · ' + fmt(o.V_ul) + ' µL' : ' · ' + fmt(o.V_ul / 1000) + ' mL') + ' · ' + (o.n >= 1 ? o.n.toLocaleString('en-GB') + (o.n === 1 ? ' sample' : ' samples') + ' from the vial' : 'more than the vial holds'));
       $('r-how').textContent = okS ? fmt(o.a_mg * 1000) + ' µg ÷ ' + fmt(o.C) + ' µg/µL = ' + fmt(o.V_ul) + ' µL' : '';
-      if (inl) inl.textContent = okS ? 'Draw up ' + vol(o.V_ul) + ' of solution for ' + fmt(o.a_mg * 1000) + ' µg' : ok ? 'Enter the amount you want in a sample.' : 'Enter the vial contents and diluent volume first.';
+      if (inl) inl.textContent = okS ? 'Measure out ' + vol(o.V_ul) + ' of solution for ' + fmt(o.a_mg * 1000) + ' µg' + (SYR_ON ? ' · ' + uStr(units(o.V_ul)) + ' on a 1 mL graduated syringe' : '') : ok ? 'Enter the amount you want in a sample.' : 'Enter the vial contents and diluent volume first.';
     } else {
       $('r-sample-label').textContent = 'Amount of peptide in that volume';
       $('r-sample').textContent = dashS(fmt(o.a_mg * 1000) + ' µg');
       $('r-sample-sub').textContent = dashS(fmt(o.a_mg) + ' mg' + (isFinite(o.a_nmol) ? ' · ' + fmt(o.a_nmol) + ' nmol' : '') + ' in ' + fmt(o.V_ul) + ' µL · ' + (o.n >= 1 ? o.n.toLocaleString('en-GB') + (o.n === 1 ? ' sample' : ' samples') + ' from the vial' : 'more than the vial holds'));
-      $('r-how').textContent = okS ? fmt(o.V_ul) + ' µL × ' + fmt(o.C) + ' µg/µL = ' + fmt(o.a_mg * 1000) + ' µg' : '';
-      if (inl) inl.textContent = okS ? fmt(o.V_ul) + ' µL of solution holds ' + fmt(o.a_mg * 1000) + ' µg' : ok ? 'Enter the volume you will draw up.' : 'Enter the vial contents and diluent volume first.';
+      $('r-how').textContent = okS ? (o.inUnits ? fmt(units(o.V_ul)) + ' divisions × 10 µL = ' : '') + fmt(o.V_ul) + ' µL × ' + fmt(o.C) + ' µg/µL = ' + fmt(o.a_mg * 1000) + ' µg' : '';
+      if (inl) inl.textContent = okS ? (o.inUnits ? uStr(units(o.V_ul)) + ' (' + vol(o.V_ul) + ')' : fmt(o.V_ul) + ' µL') + ' of solution holds ' + fmt(o.a_mg * 1000) + ' µg' : ok ? 'Enter the volume of the sample.' : 'Enter the vial contents and diluent volume first.';
     }
-    $('r-per').textContent = dash('1 µL contains ' + fmt(o.C * 1000) + ' µg' + (isFinite(o.mM) ? ' (' + fmt(o.mM) + ' nmol)' : '') + ' · the vial holds ' + fmt(o.m) + ' mg in ' + vol(o.v * 1000));
+    if (SYR_ON) {
+      var u = units(o.V_ul);
+      $('r-units').textContent = dashS(uStr(u));
+      $('r-units-sub').textContent = okS && !L ? fmt(o.V_ul) + ' µL ÷ 10 µL per division · ' + fmt(o.V_ul / 1000) + ' mL' : '1 division = 10 µL (0.01 mL)';
+      drawSyringe(okS && !L ? u : NaN);
+    }
+    $('r-per').textContent = dash('1 µL contains ' + fmt(o.C) + ' µg' + (isFinite(o.mM) ? ' (' + fmt(o.mM) + ' nmol)' : '') + ' · the vial holds ' + fmt(o.m) + ' mg in ' + vol(o.v * 1000));
     $('r-warn').hidden = L || !ok || !o.over;
     $('r-hint').hidden = L || ok;
     // figure: liquid level (3 mL vial drawn full) and sample gauge
@@ -108,6 +121,32 @@
       $('gauge-text').textContent = okS && !L ? 'One sample = ' + fmt(o.V_ul) + ' µL of ' + vol(o.v * 1000) + (frac < 1 ? ' (' + fmt(frac * 100, 3) + '%)' : '') : 'Sample volume will appear here';
     }
   }
+  // ---------- syringe scale: 1 mL in 100 divisions; barrel scale runs from x=54 over 292 user units ----------
+  var SYR = { 100: { minor: 2, mid: 10, major: 10 }, 50: { minor: 1, mid: 5, major: 5 }, 30: { minor: 0.5, mid: 1, major: 5 } };
+  var SX0 = 54, SL = 292, drawnCap = 0;
+  function drawScale(cap) {
+    var s = SYR[cap], n = Math.round(cap / s.minor), out = '';
+    for (var i = 0; i <= n; i++) {
+      var u = i * s.minor, x = (SX0 + u / cap * SL).toFixed(1);
+      var major = Math.abs(u / s.major - Math.round(u / s.major)) < 1e-9, mid = Math.abs(u / s.mid - Math.round(u / s.mid)) < 1e-9;
+      out += '<line class="s-tick' + (major ? ' major' : '') + '" x1="' + x + '" y1="63" x2="' + x + '" y2="' + (63 - (major ? 11 : mid ? 7 : 4)) + '"/>';
+      if (major) out += '<text class="s-lbl" x="' + x + '" y="78" text-anchor="middle">' + u + '</text>';
+    }
+    $('s-ticks').innerHTML = out;
+  }
+  function drawSyringe(u) {
+    var pick = $('c-syr'); if (!pick) return;
+    var cap = +pick.value || 100; if (cap !== drawnCap) { drawScale(cap); drawnCap = cap; }
+    var okU = isFinite(u) && u > 0, over = okU && u > cap + 1e-9, frac = okU ? Math.min(1, u / cap) : 0, x = SX0 + frac * SL;
+    var fill = $('s-fill'), seal = $('s-seal'), rod = $('s-rod');
+    fill.setAttribute('width', (frac * SL).toFixed(2)); fill.style.width = (frac * SL).toFixed(2) + 'px';
+    seal.setAttribute('x', x.toFixed(2)); seal.style.x = x.toFixed(2) + 'px';
+    rod.setAttribute('x', (x + 4).toFixed(2)); rod.style.x = (x + 4).toFixed(2) + 'px';
+    rod.setAttribute('width', Math.max(0, 366 - x).toFixed(2)); rod.style.width = Math.max(0, 366 - x).toFixed(2) + 'px';
+    var t = $('s-read'); t.textContent = okU ? (over ? 'over ' + cap : fmt(u)) + ' div' : ''; t.setAttribute('x', Math.max(74, Math.min(326, x)).toFixed(1));
+    $('syr-fig').classList.toggle('s-over', over);
+    $('syr-text').textContent = okU ? (over ? uStr(u) + ' · more than the ' + cap + '-division scale' : uStr(u) + ' on the ' + cap + '-division scale · ' + fmt(frac * 100, 3) + '% of the barrel') : 'Volume shown as 0.01 mL divisions · 1 division = 10 µL';
+  }
   function summary() {
     var o = last; if (!o || !acked || !isFinite(o.C)) return '';
     var p = PEP[sel.value];
@@ -115,7 +154,8 @@
       'Peptide: ' + (p ? p.name : 'not specified') + (isFinite(o.mw) ? ' · MW ' + fmt(o.mw, 6) + ' g/mol' : ''),
       'Vial contents: ' + fmt(o.m) + ' mg · Diluent: ' + vol(o.v * 1000),
       'Concentration: ' + fmt(o.C) + ' mg/mL (' + fmt(o.C) + ' µg/µL)' + (isFinite(o.mM) ? ' · ' + fmt(o.mM) + ' mM' : ''),
-      isFinite(o.V_ul) && o.V_ul > 0 ? (o.mode === 'volume' ? 'Amount wanted per sample: ' + fmt(o.a_mg * 1000) + ' µg → draw up ' + vol(o.V_ul) + ' of solution' : 'Volume drawn up per sample: ' + fmt(o.V_ul) + ' µL → holds ' + fmt(o.a_mg * 1000) + ' µg') + (o.n >= 1 ? ' · ' + o.n + ' samples per vial' : '') : '',
+      isFinite(o.V_ul) && o.V_ul > 0 ? (o.mode === 'volume' ? 'Amount wanted per sample: ' + fmt(o.a_mg * 1000) + ' µg → ' + vol(o.V_ul) + ' of solution' : 'Volume per sample: ' + fmt(o.V_ul) + ' µL → holds ' + fmt(o.a_mg * 1000) + ' µg') + (o.n >= 1 ? ' · ' + o.n + ' samples per vial' : '') : '',
+      SYR_ON && isFinite(o.V_ul) && o.V_ul > 0 ? 'Syringe reading: ' + uStr(units(o.V_ul)) + ' on a 1 mL syringe graduated in 100 divisions (1 division = 10 µL)' : '',
       '', 'Arithmetic only, on values entered by the researcher. Deimos Labs does not recommend any amount, concentration, solvent or protocol. For laboratory research use only. Not for human or veterinary use.',
       'https://www.deimos-labs.co.uk/calculator.html'].filter(function (l) { return l !== ''; }).join('\n');
   }
@@ -126,20 +166,20 @@
     try { navigator.clipboard.writeText(text).then(done, fail); } catch (e) { fail(); }
   }
   if ($('c-mass')) {
-    ['c-mass', 'c-mass-u', 'c-vol', 'c-vol-u', 'c-mw', 'c-amt', 'c-amt-u', 'c-svol'].forEach(function (id) { $(id).addEventListener('input', update); $(id).addEventListener('change', update); });
+    ['c-mass', 'c-mass-u', 'c-vol', 'c-vol-u', 'c-mw', 'c-amt', 'c-amt-u', 'c-svol', 'c-svol-u', 'c-syr'].forEach(function (id) { if ($(id)) { $(id).addEventListener('input', update); $(id).addEventListener('change', update); } });
     [].forEach.call(document.querySelectorAll('[name=c-solve]'), function (r) { r.addEventListener('change', update); });
     $('c-copy').addEventListener('click', function () { copyText(summary(), $('c-copy-note')); });
     $('c-link').addEventListener('click', function () { copyText(acked && isFinite(last.C) ? location.href : '', $('c-copy-note'), true); });
     $('c-reset').addEventListener('click', function () {
       sel.value = ''; ['c-mass', 'c-vol', 'c-mw', 'c-amt', 'c-svol'].forEach(function (id) { $(id).value = ''; });
-      $('c-mass-u').value = 'mg'; $('c-vol-u').value = 'mL'; $('c-amt-u').value = 'ug'; setSolve('volume'); update(); $('c-mass').focus();
+      $('c-mass-u').value = 'mg'; $('c-vol-u').value = 'mL'; $('c-amt-u').value = 'ug'; if ($('c-svol-u')) $('c-svol-u').value = 'uL'; if ($('c-syr')) $('c-syr').value = '100'; setSolve('volume'); update(); $('c-mass').focus();
     });
     // prefill from the query string (product pages link here with ?p=slug&size=5mg)
     try {
       var q = new URLSearchParams(location.search);
       if (q.get('p') && PEP[q.get('p')]) { sel.value = q.get('p'); $('c-mw').value = PEP[q.get('p')].mw; }
       if (q.get('size')) { var sz = /^([\d.]+)\s*(mg|ug|µg)$/.exec(q.get('size')); if (sz) { $('c-mass').value = sz[1]; $('c-mass-u').value = sz[2] === 'mg' ? 'mg' : 'ug'; } }
-      ['mass', 'mass-u', 'vol', 'vol-u', 'mw', 'amt', 'amt-u', 'svol'].forEach(function (k) { if (q.has(k)) $('c-' + k).value = q.get(k); });
+      ['mass', 'mass-u', 'vol', 'vol-u', 'mw', 'amt', 'amt-u', 'svol', 'svol-u', 'syr'].forEach(function (k) { if (q.has(k) && $('c-' + k)) $('c-' + k).value = q.get(k); });
       if (q.get('solve')) setSolve(q.get('solve'));
       if (q.get('mode') === 'blend') showTab('panel-blend');
     } catch (e) {}
@@ -187,6 +227,7 @@
     $('b-total').textContent = dash(total > 0, fmt(total) + ' mg');
     $('b-conc').textContent = dash(ok, fmt(total / v) + ' mg/mL');
     $('b-svol').textContent = dash(okS, vol(V_ul));
+    if ($('b-units')) $('b-units').textContent = dash(okS, uStr(units(V_ul)));
     $('b-n').textContent = dash(okS, (Math.floor(v * 1000 / V_ul + 1e-9) || 0).toLocaleString('en-GB') + ' per vial');
     $('b-warn').hidden = L || !okS || t <= masses[ref] + 1e-12;
     var tb = $('blend-table').querySelector('tbody'); tb.innerHTML = '';
@@ -206,7 +247,7 @@
     $('b-copy').addEventListener('click', function () {
       var ok = acked && $('b-conc').textContent !== '—';
       var lines = ok ? ['Blend summary (Deimos Labs calculator)', 'Total mass: ' + $('b-total').textContent + ' · Diluent: ' + $('b-vol').value + ' ' + $('b-vol-u').value.replace('uL', 'µL') + ' · Total concentration: ' + $('b-conc').textContent,
-        'Sample volume: ' + $('b-svol').textContent + ' · ' + $('b-n').textContent].concat([].map.call($('blend-table').querySelectorAll('tbody tr'), function (tr) { return [].map.call(tr.children, function (td) { return td.textContent; }).join(' · '); }),
+        'Sample volume: ' + $('b-svol').textContent + ($('b-units') ? ' · ' + $('b-units').textContent + ' on a 1 mL graduated syringe' : '') + ' · ' + $('b-n').textContent].concat([].map.call($('blend-table').querySelectorAll('tbody tr'), function (tr) { return [].map.call(tr.children, function (td) { return td.textContent; }).join(' · '); }),
         ['', 'Arithmetic only, on values entered by the researcher. Deimos Labs does not recommend any amount, concentration, solvent or protocol. For laboratory research use only. Not for human or veterinary use.']) : [];
       copyText(lines.join('\n'), $('b-copy-note'));
     });

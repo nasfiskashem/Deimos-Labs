@@ -96,9 +96,9 @@ window.DL_PRODUCTS={"bpc-157-5mg": {"name": "BPC-157 5mg", "price": 34.0, "href"
         if (!check(this, document.getElementById('o-error'))) return;
         var s = render();
         var body = 'Order request\n\n' + s.items.map(function (i) { return i.qty + ' x ' + P[i.id].name + ' @ ' + gbp(P[i.id].price) + ' = ' + gbp(i.qty * P[i.id].price); }).join('\n') +
-          '\n\nSubtotal: ' + gbp(s.sub) + '\n\nName: ' + val('o-name') + '\nEmail: ' + val('o-email') + '\nInstitution: ' + val('o-org') +
+          '\n\nSubtotal: ' + gbp(s.sub) + '\n\nName: ' + val('o-name') + '\nEmail: ' + val('o-email') + '\nInstitution: ' + val('o-org') + '\nDepartment or laboratory: ' + val('o-dept') + '\nIntended research use: ' + val('o-use') +
           '\nDelivery address: ' + val('o-addr').replace(/\n/g, ', ') + '\nPO number: ' + (val('o-po') || '-') +
-          '\n\nI confirm these products are for laboratory research use only.';
+          '\n\nI confirm I am ordering on behalf of the organisation named above, that these products are for laboratory research use only, and that they will not be used in humans or animals.';
         ready('result', 'result-text', 'mailto', 'Order request from ' + val('o-org'), body);
       });
     },
