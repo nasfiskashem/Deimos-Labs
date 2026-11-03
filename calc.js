@@ -100,6 +100,7 @@
       $('r-how').textContent = okS ? (o.inUnits ? fmt(units(o.V_ul)) + ' divisions × 10 µL = ' : '') + fmt(o.V_ul) + ' µL × ' + fmt(o.C) + ' µg/µL = ' + fmt(o.a_mg * 1000) + ' µg' : '';
       if (inl) inl.textContent = okS ? (o.inUnits ? uStr(units(o.V_ul)) + ' (' + vol(o.V_ul) + ')' : fmt(o.V_ul) + ' µL') + ' of solution holds ' + fmt(o.a_mg * 1000) + ' µg' : ok ? 'Enter the volume of the sample.' : 'Enter the vial contents and diluent volume first.';
     }
+    measure(okS && !L ? o.V_ul : NaN);
     if (SYR_ON) {
       var u = units(o.V_ul);
       $('r-units').textContent = dashS(uStr(u));
@@ -120,6 +121,17 @@
       $('gauge-fill').style.width = (frac * 100).toFixed(2) + '%';
       $('gauge-text').textContent = okS && !L ? 'One sample = ' + fmt(o.V_ul) + ' µL of ' + vol(o.v * 1000) + (frac < 1 ? ' (' + fmt(frac * 100, 3) + '%)' : '') : 'Sample volume will appear here';
     }
+  }
+  // ---------- measuring it out: standard lab pipettes for the sample volume ----------
+  var PIPS = [['P2', 0.2, 2, 2], ['P10', 1, 10, 2], ['P20', 2, 20, 2], ['P200', 20, 200, 1], ['P1000', 100, 1000, 0]];
+  var SERO = [1, 2, 5, 10, 25];
+  function measure(V) {
+    var pip = $('m-pip'), ser = $('m-ser'); if (!pip) return;
+    if (!(isFinite(V) && V > 0)) { pip.textContent = '—'; ser.textContent = '—'; return; }
+    var p = PIPS.filter(function (x) { return V >= x[1] && V <= x[2]; })[0];
+    pip.textContent = p ? p[0] + ', set to ' + V.toFixed(p[3]) + ' µL' : V < 0.2 ? 'Below 0.2 µL: dilute the stock first' : 'Above 1 mL: use a serological pipette';
+    var mL = V / 1000, s = SERO.filter(function (x) { return x >= mL; })[0];
+    ser.textContent = V <= 1000 ? 'Not needed at 1 mL or less' : s ? s + ' mL pipette, ' + fmt(mL) + ' mL' : 'More than 25 mL: measure in parts';
   }
   // ---------- syringe scale: 1 mL in 100 divisions; barrel scale runs from x=54 over 292 user units ----------
   var SYR = { 100: { minor: 2, mid: 10, major: 10 }, 50: { minor: 1, mid: 5, major: 5 }, 30: { minor: 0.5, mid: 1, major: 5 } };
@@ -155,6 +167,7 @@
       'Vial contents: ' + fmt(o.m) + ' mg · Diluent: ' + vol(o.v * 1000),
       'Concentration: ' + fmt(o.C) + ' mg/mL (' + fmt(o.C) + ' µg/µL)' + (isFinite(o.mM) ? ' · ' + fmt(o.mM) + ' mM' : ''),
       isFinite(o.V_ul) && o.V_ul > 0 ? (o.mode === 'volume' ? 'Amount wanted per sample: ' + fmt(o.a_mg * 1000) + ' µg → ' + vol(o.V_ul) + ' of solution' : 'Volume per sample: ' + fmt(o.V_ul) + ' µL → holds ' + fmt(o.a_mg * 1000) + ' µg') + (o.n >= 1 ? ' · ' + o.n + ' samples per vial' : '') : '',
+      $('m-pip') && isFinite(o.V_ul) && o.V_ul > 0 ? 'Micropipette: ' + $('m-pip').textContent + (o.V_ul > 1000 ? ' · Serological pipette: ' + $('m-ser').textContent : '') : '',
       SYR_ON && isFinite(o.V_ul) && o.V_ul > 0 ? 'Syringe reading: ' + uStr(units(o.V_ul)) + ' on a 1 mL syringe graduated in 100 divisions (1 division = 10 µL)' : '',
       '', 'Arithmetic only, on values entered by the researcher. Deimos Labs does not recommend any amount, concentration, solvent or protocol. For laboratory research use only. Not for human or veterinary use.',
       'https://www.deimos-labs.co.uk/calculator.html'].filter(function (l) { return l !== ''; }).join('\n');
