@@ -82,6 +82,7 @@
       <p class="fine" id="r-hint">Enter the peptide mass and the diluent volume to begin.</p>
       <div class="readout"><span class="readout-label">Concentration</span><strong id="r-conc">—</strong><span class="readout-sub mono" id="r-conc-sub">—</span></div>
       <div class="readout readout-main"><span class="readout-label" id="r-sample-label">Volume of solution per sample</span><strong id="r-sample">—</strong><span class="readout-sub mono" id="r-sample-sub">—</span><span class="readout-sub mono" id="r-how"></span></div>
+      <div class="readout measure" id="measure"><span class="readout-label">Measuring it out</span><dl class="specs"><div><dt>Micropipette</dt><dd id="m-pip">—</dd></div><div><dt>Serological pipette</dt><dd id="m-ser">—</dd></div></dl></div>
       <div class="readout"><span class="readout-label">The same volume on a 1 mL syringe graduated in 100 divisions</span><strong id="r-units">—</strong><span class="readout-sub mono" id="r-units-sub">1 division = 10 µL (0.01 mL)</span></div>
       <figure class="syr-fig" id="syr-fig"><svg viewBox="0 0 400 84" aria-hidden="true" focusable="false">
         <path d="M40 40h12v10h-12z" class="s-hub"/>
@@ -137,6 +138,8 @@
   <div class="calc-notes prose">
     <h2>How the numbers are worked out</h2>
     <p>Concentration is peptide mass divided by diluent volume: 5 mg in 2 mL is 2.5 mg/mL, which is the same as 2.5 µg/µL. Molar concentration is concentration divided by molecular weight: 2.5 g/L ÷ 1419.55 g/mol = 1.76 mmol/L. The volume that contains a given amount is amount divided by concentration: 250 µg at 2.5 µg/µL is 100 µL. The dry powder's own volume is treated as negligible, and the number of samples is the total volume divided by the sample volume, rounded down.</p>
+    <h2>Measuring it out</h2>
+    <p>The calculator suggests the smallest standard air-displacement micropipette whose range covers the sample volume (P2: 0.2–2 µL, P10: 1–10 µL, P20: 2–20 µL, P200: 20–200 µL, P1000: 100–1000 µL) and the setting to dial in, rounded to the pipette's usual display resolution. Volumes above 1 mL are shown on the smallest standard serological pipette (1, 2, 5, 10 or 25 mL) that holds them. Check the volume against your own pipettes' calibration and accuracy specification.</p>
     <h2>Syringe graduations</h2>
     <p>A 1 mL graduated syringe is commonly marked in 100 divisions, so one division is 10 µL (0.01 mL). The reading is that conversion applied to the sample volume and nothing more: 100 µL is 10 divisions whatever the solution contains, and a 0.5 mL syringe with 50 divisions uses the same 0.01 mL spacing, so the drawing can be set to match the syringe in your laboratory. A reading on a syringe scale is a volume. It is not an instruction to use a syringe, and it says nothing about how, where or whether any solution is used.</p>
     <h2>What it does not do</h2>
