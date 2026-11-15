@@ -174,7 +174,7 @@ main:focus { outline: none; }
 .pcard::before { content: ""; position: absolute; inset: 0; z-index: 3; border-radius: inherit; pointer-events: none; opacity: 0; transition: opacity .4s; background: radial-gradient(320px circle at var(--mx, 50%) var(--my, 0%), rgba(240, 180, 138, 0.10), transparent 60%); }
 .pcard:hover { border-color: var(--line-2); box-shadow: 0 40px 80px -40px rgba(0, 0, 0, 0.95); }
 .pcard:hover::before { opacity: 1; }
-.pcard-img { display: block; padding: 28px 52px 10px; background: radial-gradient(circle at 50% 42%, #1d232c, #07090b 72%); }
+.pcard-img { display: flex; justify-content: center; align-items: flex-end; aspect-ratio: 1 / 1.04; padding: 20px 20px 0; background: radial-gradient(circle at 50% 42%, #1d232c, #07090b 72%); }
 .pcard-img .vial { transition: transform .6s var(--ease); }
 .pcard:hover .pcard-img .vial { transform: translateY(-6px); }
 .pcard-body { position: relative; z-index: 2; display: flex; flex-direction: column; gap: 6px; padding: 18px 20px 20px; flex: 1; }
@@ -186,19 +186,9 @@ main:focus { outline: none; }
 .price { font: 600 1.25rem/1 var(--font-display); font-variant-numeric: tabular-nums; }
 .price-lg { font-size: 2rem; }
 
-/* ---------- Vial drawing ---------- */
-.vial { width: 100%; height: auto; display: block; }
-.v-shadow { fill: #000; opacity: 0.5; }
-.v-cap { fill: #e9ecf0; }
-.v-crimp { fill: #6b7380; }
-.v-glass { fill: #141a22; stroke: #4b5562; stroke-width: 2; }
-.v-powder { fill: var(--powder); opacity: 0.92; }
-.v-label { fill: #0b0d10; stroke: rgba(255, 255, 255, 0.12); stroke-width: 1; }
-.v-dot { fill: var(--oxide); }
-.v-brand { font: 600 8px var(--font-mono); letter-spacing: 1px; fill: #8f96a0; }
-.v-name { font: 700 15px var(--font-display); fill: #eef0f3; }
-.v-size { font: 500 12px var(--font-mono); fill: var(--oxide-2); }
-.v-shine { stroke: #fff; stroke-opacity: 0.1; stroke-width: 5; stroke-linecap: round; }
+/* ---------- Vial pictures (assets/vials, the real label on a 2 mL vial) ---------- */
+.vial { display: block; height: 100%; width: auto; max-width: 100%; object-fit: contain; object-position: bottom center; }
+.product-media .vial { height: min(62vh, 560px); margin: 0 auto; }
 
 /* ---------- Process ---------- */
 .process { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1px solid var(--line); border-left: 1px solid var(--line); }
@@ -415,7 +405,7 @@ textarea { resize: vertical; }
   .process, .features, .form .row { grid-template-columns: minmax(0, 1fr); }
   .announce-inner span:not(:first-child) { display: none; }
   .pgrid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
-  .pcard-img { padding: 16px 24px 6px; }
+  .pcard-img { padding: 12px 12px 0; }
   .pcard-body { padding: 14px; }
   .pcard-buy .btn { width: 100%; }
   .sort { margin-left: 0; }
